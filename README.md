@@ -1,2 +1,2 @@
 # Dolphinn
-A C++ project to solve the near neighbor problem.
+Hashed High Dimensional Approximate Near Neighbor.
