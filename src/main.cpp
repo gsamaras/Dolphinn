@@ -39,7 +39,7 @@ int main()
 
   //readfvecs<T>(pointset, N, D, "../create_pointset/siftsmall/siftsmall_base.fvecs");
   //read_points<T>(pointset, N, D, data_filename.c_str());
-  read_points_IDX_format<T>(pointset, N, D, "/Users/gsamaras/Code/create_pointset/MNIST/train-images-idx3-ubyte");
+  //read_points_IDX_format<T>(pointset, N, D, "/Users/gsamaras/Code/create_pointset/MNIST/train-images-idx3-ubyte");
 
   //print_2D_vector<T>(pointset, N, D);
 
@@ -77,7 +77,7 @@ int main()
   std::vector<T> query(Q * D);
   //readfvecs<T>(query, Q, D, "../create_pointset/siftsmall/siftsmall_base.fvecs");
   //read_points<T>(pointset, Q, D, query_filename.c_str());
-  read_points_IDX_format<T>(query, Q, D, "/Users/gsamaras/Code/create_pointset/MNIST/train-images-idx3-ubyte");
+  //read_points_IDX_format<T>(query, Q, D, "/Users/gsamaras/Code/create_pointset/MNIST/train-images-idx3-ubyte");
 
   // map all the queries
   std::vector<bitT> mapped_query(Q * K);
