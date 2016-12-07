@@ -76,7 +76,7 @@ int main()
   // QUERY
   std::vector<T> query(Q * D);
   //readfvecs<T>(query, Q, D, "../create_pointset/siftsmall/siftsmall_base.fvecs");
-  //read_points<T>(pointset, Q, D, query_filename.c_str());
+  //read_points<T>(query, Q, D, query_filename.c_str());
   //read_points_IDX_format<T>(query, Q, D, "/Users/gsamaras/Code/create_pointset/MNIST/train-images-idx3-ubyte");
 
   // map all the queries
