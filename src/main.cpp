@@ -4,7 +4,6 @@
 #include "IO.h"
 #include "memory.h"
 #include "hash.h"
-//#include "hashCompareFalconn.h"
 
 #include <ctime>
 #include <ratio>
@@ -20,7 +19,6 @@
 #define RADIUS 1
 
 //     /usr/bin/time -l ./fish
-//     ssh gsamaras@195.134.71.24
 int main()
 {
   if(MAX_PNTS_TO_SEARCH > N)
