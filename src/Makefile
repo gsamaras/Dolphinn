@@ -1,6 +1,6 @@
 OBJS  =	main.o
 SOURCE  =	main.cpp
-HEADER  =	IO.h	memory.h	hash.h  hashCompareFalconn.h
+HEADER  =	IO.h	memory.h	hash.h
 OUT   =	dolphinn
 CXX =	g++
 FLAGS	=	-std=c++0x	-Wall   -O3
