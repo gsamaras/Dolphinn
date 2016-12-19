@@ -1,9 +1,9 @@
 OBJS  =	main.o
 SOURCE  =	main.cpp
-HEADER  =	IO.h	memory.h	hash.h
+HEADER  =	IO.h	memory.h	hash.h  hypercube.h
 OUT   =	dolphinn
 CXX =	g++
-FLAGS	=	-std=c++0x	-Wall   -O3
+FLAGS	=	-pthread    -std=c++0x	-Wall   -O3 -Qunused-arguments
 
 all:	$(OBJS)
 	$(CXX)	$(OBJS)	-o	$(OUT)	$(FLAGS)

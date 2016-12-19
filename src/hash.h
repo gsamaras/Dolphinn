@@ -9,6 +9,7 @@
 #include <numeric>
 #include <unordered_map>
 #include <string>
+#include <thread>
 
 #include "Euclidean_dist.h"
 
@@ -21,8 +22,8 @@ template <class T>
 class StableHashFunction
 {
     // of original pointset
-    const int dimension; 
-    const int r;
+    int dimension; 
+    int r;
     int b;
     std::vector<T> a;
     std::uniform_int_distribution<int> uni_distribution;
@@ -42,9 +43,10 @@ class StableHashFunction
 	 * Assign 'D' random values from a normal distribution
 	 * N(0,1/sqrt(D)).
 	 *
-	 * @param v		- vector of points
-	 * @param N   - number of points
-	 * @param D   - dimension of points
+	 * @param D  		 - dimension of points
+	 * @param r  		 - parameter of Stable Distribution
+	 * @param mean  	 - optional parameter of Normal Distribution. Default is 0.0.
+	 * @param deviation  - optional parameter of Normal Distribution. Default is 1.0.
 	 */
   	StableHashFunction(const int D, const int r, const float mean = 0.0, const float deviation = 1.0)
   		: dimension(D), r(r), uni_distribution(0, r), uni_bit_distribution(0, 1),
@@ -59,13 +61,41 @@ class StableHashFunction
   		b = uni_distribution(generator);
   	}
 
+    /** \brief Constructor that creates a 
+     * vector from a stable distribution,
+     * in a distributed environment.
+     *
+     * Assign 'D' random values from a normal distribution
+     * N(0,1/sqrt(D)).
+     *
+     * @param D            - dimension of points
+     * @param r            - parameter of Stable Distribution
+     * @param thread_info  - Something that identifies the thread, so that every thread
+     *                       creates its own random numbers, and not the same - as is the
+     *                       case with just seeding the random generator with the time.
+     * @param mean         - optional parameter of Normal Distribution. Default is 0.0.
+     * @param deviation    - optional parameter of Normal Distribution. Default is 1.0.
+    */
+    StableHashFunction(const int D, const int r, const int thread_info, const float mean = 0.0, const float deviation = 1.0)
+      : dimension(D), r(r), uni_distribution(0, r), uni_bit_distribution(0, 1),
+      generator(thread_info + std::chrono::system_clock::now().time_since_epoch().count())
+    {     
+      std::normal_distribution<typename std::conditional<std::is_same<T, int>::value, float, T>::type> distribution(mean, deviation);
+      for(int i = 0; i < D; ++i)
+      {
+        a.push_back(distribution(generator));
+      }
+
+      b = uni_distribution(generator);
+    }
+
   	/** \brief Hash a pointset.
 	 *
 	 * @param v  	- vector of points
 	 * @param N   - number of points
 	 * @param D   - dimension of points
 	 */
-  	void hash(std::vector<T>& v, const int N, const int D)
+  	void hash(const std::vector<T>& v, const int N, const int D)
   	{
   		for(int i = 0; i < N; ++i)
   		{
@@ -112,7 +142,6 @@ class StableHashFunction
     /** \brief Assing random bit for every key and fill cube's hashtable.
      *
      * @param v   - vector of (to be) mapped points
-     * @param k   - iteration (assign the k-th bit of the points)
      * @param K   - dimension of the cube that awaits for
      *          the points to be mapped on its vertices
     */
@@ -165,7 +194,7 @@ class StableHashFunction
       * @return                    - index of a point, where Eucl(point[i], query_point) <= r
     */
     template <typename iterator>
-    int query(std::string mapped_query, const int radius, const int K, const int MAX_PNTS_TO_SEARCH, iterator pointset, iterator query_point)
+    int radius_query(std::string mapped_query, const int radius, const int K, const int MAX_PNTS_TO_SEARCH, iterator pointset, iterator query_point)
     {
       int points_checked = 0;
       int answer_point_idx = -1;
@@ -236,6 +265,34 @@ class StableHashFunction
         find_strings_with_fixed_Hamming_dist(str, i-1, changesLeft, points_checked, MAX_PNTS_TO_SEARCH, squared_radius, pointset, query_point, answer_point_idx);
       }
       return stop;
+    }
+
+    /** \brief Check if vector is full of 'value'.
+     *
+     * @param vec   - vector to be checked
+     * @param value - check if all elements of 'vec' have this value
+     * @return      - True if all elements of 'vev' are 'value'. False, otherwise.
+    */
+    bool check_vec(std::vector<int>& vec, int value)
+    {
+      for (auto& v: vec)
+        if(v != value)
+          return false;
+      return true;
+    }
+
+    /** \brief Return first element of 'vec' that is different from 'value'.
+     *
+     * @param vec   - vector to be checked
+     * @param value - check if all elements of 'vec' have this value
+     * @return      - Element of 'vec' different from 'value', if exists. 'value', otherwise.
+    */
+    int find_non_value_in_vec(std::vector<int>& vec, int value)
+    {
+      for (auto& v: vec)
+        if(v != value)
+          return v;
+      return value;
     }
 
   	/** \brief Print 'hashtable'.

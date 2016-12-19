@@ -4,6 +4,7 @@
 #include <fstream>
 #include <vector>
 #include <iostream>
+#include <sstream>
 
 /** \brief Read a collection of points from file.
  *
@@ -46,12 +47,14 @@ void read_points(std::vector<T>& v, int N, int D, const char* filename)
  */
 template<typename T>
 void readfvecs(std::vector<T>& v, int N, int D, const char* filename) {
+  if(!std::is_same<T, float>::value && !std::is_same<T, double>::value)
+    std::cout << "WARNING!!!!!!!!! You are reasding fvecs, but T is neither float nor double!" << std::endl;
   FILE* fid;
   fid = fopen(filename, "rb");
 
   if (!fid) {
     printf("I/O error : Unable to open the file %s\n", filename);
-    std::cerr << "Error: " << strerror(errno) << std::endl;
+    //std::cerr << "Error: " << strerror(errno) << std::endl;
   }
 
   // we assign the return value of fread() to 'sz' just to suppress a warning
@@ -115,6 +118,8 @@ int reverseInt (int i)
 template<typename T>
 void read_points_IDX_format(std::vector<T>& v, int N, int D, const char* filename)
 {
+  if(!std::is_same<T, int>::value)
+    std::cout << "WARNING!!!!!!!!! You are reasding IDX format (usually MNIST), but T is not int!" << std::endl;
   std::ifstream file (filename);
 
   int magic_number=0;
@@ -152,6 +157,79 @@ void read_points_IDX_format(std::vector<T>& v, int N, int D, const char* filenam
     std::cout << "ERROR, read less than " << N << " points!!\n\n";
   if (n_rows * n_cols != D)
     std::cout << "ERROR, dimension less than " << D << " points!!\n\n";
+}
+
+/** \brief Read a custom format of Crow features,
+ * based on the Oxford dataset.
+ *
+ * Dimension and number of points should have been
+ * assigned a value before reaching this function.
+ *
+ * @param data     - vector of points
+ * @param N        - number of points. Usually 5063.
+ * @param D        - dimension of points. Usually 512.
+ * @param filename - input file
+ */
+template<typename T>
+void read_crow_features_oxford(std::vector<T>& data, int N, int D, const char* filename) {
+  if(!std::is_same<T, float>::value && !std::is_same<T, double>::value)
+    std::cout << "WARNING!!!!!!!!! You are reasding CROW features for Oxford dataset, but T is neither float nor double!" << std::endl;
+
+    std::string line;
+    std::ifstream infile(filename);
+    int i = 0, j = 0;
+    while(std::getline(infile, line)) {
+        bool exists = line.find("[") != std::string::npos;
+        if(exists) {
+            std::istringstream iss(line);
+            char bracket;
+            iss >> bracket;
+            float v;
+            while (iss >> v) {
+                data[i * D + j++] = v;
+            }
+            continue;
+        }
+        exists = line.find("]") != std::string::npos;
+        std::istringstream iss(line);
+        float v;
+        while (iss >> v) {
+            data[i * D + j++] = v;
+        }
+        if(exists) {
+            j = 0;
+            ++i;
+        }
+        //break;
+    }
+    if(i != N)
+        std::cout << "WARNING!!!!!!!! READ less/more points than N" << std::endl;
+    infile.close();
+}
+
+/** \brief Read a custom format of Crow features,
+ * based on the Oxford dataset's queries.
+ *
+ * Dimension and number of points should have been
+ * assigned a value before reaching this function.
+ *
+ * @param query     - vector of points
+ * @param N        - number of points. Usually 55.
+ * @param D        - dimension of points. Usually 512.
+ * @param filename - input file
+ */
+template<typename T>
+void read_crow_features_oxford_queries(std::vector<T>& query, int Q, int D, const char* filename) {
+    std::ifstream query_file;
+    float v;
+    query_file.open (filename);
+    for(int i = 0; i < Q; ++i) {
+        for(int j = 0; j < D; ++j) {
+            query_file >> v;
+            query[i * D + j] = v;
+        }
+    }
+    query_file.close();
 }
 
 /** \brief Print 2D vector.

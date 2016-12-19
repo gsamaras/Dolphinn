@@ -39,7 +39,7 @@ int Euclidean_distance_within_radius(iterator pointset, const std::vector<int>& 
  const int D, iterator query_point, const int squared_radius, const int threshold)
 {
   int size = points_idxs.size();
-  for(unsigned int i = 0; i < threshold && i < size; ++i)
+  for(int i = 0; i < threshold && i < size; ++i)
   {
     if(squared_Eucl_distance(query_point, query_point + D, pointset + points_idxs[i] * D) <= squared_radius)
       return points_idxs[i];
@@ -47,5 +47,33 @@ int Euclidean_distance_within_radius(iterator pointset, const std::vector<int>& 
   return -1;
 }
 
+/** \brief Report a point's index (if any) that has Euclidean distance
+ * less or equal than a given radius. Usage in a parallel environment.
+ *
+ * @param pointset          - 1D vector of all points
+ * @param points_idxs       - indices of candidate points
+ * @param start_points_idxs - where to start checking
+ * @param end_points_idxs   - where to stop checking
+ * @param D                 - dimension of points
+ * @param query_point       - vector containing only the coordinates of the query point
+ * @param squared_radius    - square value of given radius
+ * @param threshold         - max number of points to check
+ * @param answer_idx        - the index of the point. -1 if not found.
+ */
+template <typename iterator>
+void Euclidean_distance_within_radius(iterator pointset, const std::vector<int>& points_idxs,
+  const int start_points_idxs, const int end_points_idxs,
+  const int D, iterator query_point, const int squared_radius, const int threshold, int& answer_idx)
+{
+  answer_idx = -1;
+  for(int i = start_points_idxs; i < threshold && i < end_points_idxs; ++i)
+  {
+    if(squared_Eucl_distance(query_point, query_point + D, pointset + points_idxs[i] * D) <= squared_radius)
+    {
+      answer_idx = points_idxs[i];
+      break;
+    }
+  }
+}
 
 #endif /*EUCLIDEAN_DIST_H*/
