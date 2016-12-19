@@ -38,7 +38,7 @@ namespace Dolphinn
     Hypercube(const std::vector<T>& pointset, const int N, const int D, const int K, const int threads_no = std::thread::hardware_concurrency(), const int r = 4)
       : D(D), K(K), pointset(pointset)
     {
-      if(threads_no >= K || (threads_no % (K - 1)) != 0)
+      if(threads_no >= K || ((K - 1) % threads_no) != 0)
       {
         std::cout << "Threads number is greater or equal to K (dimension of Hypercube). Or  (threads_no MOD (K - 1)) != 0. Construction aborted..." << std::endl;
         return;
