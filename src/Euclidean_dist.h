@@ -38,13 +38,39 @@ template <typename iterator>
 int Euclidean_distance_within_radius(iterator pointset, const std::vector<int>& points_idxs,
  const int D, iterator query_point, const int squared_radius, const int threshold)
 {
-  int size = points_idxs.size();
+  const int size = points_idxs.size();
   for(int i = 0; i < threshold && i < size; ++i)
   {
     if(squared_Eucl_distance(query_point, query_point + D, pointset + points_idxs[i] * D) <= squared_radius)
       return points_idxs[i];
   }
   return -1;
+}
+
+/** \brief Report Nearest Neighbor's index, if something better than the current NN is found.
+ *
+ * @param pointset              - 1D vector of all points
+ * @param points_idxs           - indices of candidate points
+ * @param D                     - dimension of points
+ * @param query_point           - vector containing only the coordinates of the query point
+ * @param answer_point_idx_dist - current best NN point. Will be updated if a point closer to the query is found.
+ * @param threshold             - max number of points to check
+ */
+template <typename iterator>
+void find_Nearest_Neighbor_index(iterator pointset, const std::vector<int>& points_idxs,
+ const int D, iterator query_point, std::pair<int, float>& answer_point_idx_dist, const int threshold)
+{
+  const int size = points_idxs.size();
+  float current_dist;
+  for(int i = 0; i < threshold && i < size; ++i)
+  {
+    current_dist = squared_Eucl_distance(query_point, query_point + D, pointset + points_idxs[i] * D);
+    if(current_dist < answer_point_idx_dist.second)
+    {
+      answer_point_idx_dist.second = current_dist;
+      answer_point_idx_dist.first = points_idxs[i];
+    }
+  }
 }
 
 /** \brief Report a point's index (if any) that has Euclidean distance

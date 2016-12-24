@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <string>
 #include <thread>
+#include <utility>
 
 #include "Euclidean_dist.h"
 
@@ -183,7 +184,7 @@ class StableHashFunction
     	}
     }   
 
-    /** \brief Query the Hamming cube.
+    /** \brief Radius query the Hamming cube.
       *
       * @param mapped_query        - mapped query
       * @param radius              - find a point within r with query
@@ -212,13 +213,13 @@ class StableHashFunction
       int Hamming_dist = 1;
       while (points_checked < MAX_PNTS_TO_SEARCH && answer_point_idx == -1)
       {
-        find_strings_with_fixed_Hamming_dist<iterator>(mapped_query, K - 1, Hamming_dist++, points_checked, MAX_PNTS_TO_SEARCH, squared_radius, pointset, query_point, answer_point_idx);
+        find_strings_with_fixed_Hamming_dist_for_radius_query<iterator>(mapped_query, K - 1, Hamming_dist++, points_checked, MAX_PNTS_TO_SEARCH, squared_radius, pointset, query_point, answer_point_idx);
       }
       //std::cout << "ANSWER = " << answer_point_idx << ", checked points = " << points_checked << std::endl;
       return answer_point_idx;
     }
 
-    /** \brief Find strings within a given Hamming distance.
+    /** \brief Find strings within a given Hamming distance. Used by 'radius_query()'.
       *
       * @param str                 - given string
       * @param i                   - index
@@ -229,7 +230,7 @@ class StableHashFunction
       * @param answer_point_idx    - index of point that has distance less or equal than r with the query
     */
     template <typename iterator>
-    bool find_strings_with_fixed_Hamming_dist(std::string& str, const int i, const int changesLeft, 
+    bool find_strings_with_fixed_Hamming_dist_for_radius_query(std::string& str, const int i, const int changesLeft, 
       int& points_checked, const int MAX_PNTS_TO_SEARCH, const int squared_radius, iterator& pointset, 
       iterator& query_point, int& answer_point_idx)
     {
@@ -256,13 +257,85 @@ class StableHashFunction
       if(!stop)
       {
         str[i] ^= 1;
-        find_strings_with_fixed_Hamming_dist(str, i-1, changesLeft-1, points_checked, MAX_PNTS_TO_SEARCH, squared_radius, pointset, query_point, answer_point_idx);
+        find_strings_with_fixed_Hamming_dist_for_radius_query(str, i-1, changesLeft-1, points_checked, MAX_PNTS_TO_SEARCH, squared_radius, pointset, query_point, answer_point_idx);
       }
       // or don't flip it (flip it again to undo)
       if(!stop)
       {
         str[i] ^= 1;
-        find_strings_with_fixed_Hamming_dist(str, i-1, changesLeft, points_checked, MAX_PNTS_TO_SEARCH, squared_radius, pointset, query_point, answer_point_idx);
+        find_strings_with_fixed_Hamming_dist_for_radius_query(str, i-1, changesLeft, points_checked, MAX_PNTS_TO_SEARCH, squared_radius, pointset, query_point, answer_point_idx);
+      }
+      return stop;
+    }
+
+    /** \brief Nearest Neighbor query the Hamming cube.
+      *
+      * @param mapped_query        - mapped query
+      * @param K                   - dimension of the mapped query
+      * @param MAX_PNTS_TO_SEARCH  - threshold
+      * @param pointset            - original points
+      * @param query_point         - original query
+      * @return                    - index and distance from query of (approximate) Nearest Neighbor
+    */
+    template <typename iterator>
+    std::pair<int, float> nearest_neighbor_query(std::string mapped_query, const int K, const int MAX_PNTS_TO_SEARCH, iterator pointset, iterator query_point)
+    {
+      int points_checked = 0;
+      std::pair<int, float> answer_point_idx_dist(-1, 1000000.0);
+      const auto& q_key_it = hashtable_cube.find(mapped_query);
+      // search query's cube vertex, if pointsets' points exist there
+      if(q_key_it != hashtable_cube.end())
+      {
+        find_Nearest_Neighbor_index<iterator>(pointset, q_key_it->second, dimension, query_point, answer_point_idx_dist, MAX_PNTS_TO_SEARCH);
+        points_checked += q_key_it->second.size();
+      }
+      // check neighboring vertices from query's cube vertex
+      int Hamming_dist = 1;
+      while (points_checked < MAX_PNTS_TO_SEARCH)
+      {
+        find_strings_with_fixed_Hamming_dist_for_nearest_neighbor_query<iterator>(mapped_query, K - 1, Hamming_dist++, points_checked, MAX_PNTS_TO_SEARCH, pointset, query_point, answer_point_idx_dist);
+      }
+      return answer_point_idx_dist;
+    }
+
+    /** \brief Find strings within a given Hamming distance. Used by 'nearest_neighbor_query()'.
+      *
+      * @param str                     - given string
+      * @param i                       - index
+      * @param changesLeft             - changes left to make
+      * @param points_checked          - current points checked
+      * @param MAX_PNTS_TO_SEARCH      - threshold
+      * @param answer_point_idx_dist   - index and distance of current best Nearest Neighbor
+    */
+    template <typename iterator>
+    bool find_strings_with_fixed_Hamming_dist_for_nearest_neighbor_query(std::string& str, const int i, const int changesLeft, 
+      int& points_checked, const int MAX_PNTS_TO_SEARCH, iterator& pointset, 
+      iterator& query_point, std::pair<int, float>& answer_point_idx_dist)
+    {
+      bool stop = false;
+      if (changesLeft == 0) {
+        const auto& key_value_it = hashtable_cube.find(str);
+        if(key_value_it != hashtable_cube.end())
+        {
+          find_Nearest_Neighbor_index<iterator>(pointset, key_value_it->second, dimension, query_point, answer_point_idx_dist, MAX_PNTS_TO_SEARCH);
+          points_checked += key_value_it->second.size();
+          stop = (points_checked > MAX_PNTS_TO_SEARCH);
+        }
+        return stop;
+      }
+      if (i < 0)
+        return 0;
+      // flip current bit
+      if(!stop)
+      {
+        str[i] ^= 1;
+        find_strings_with_fixed_Hamming_dist_for_nearest_neighbor_query(str, i-1, changesLeft-1, points_checked, MAX_PNTS_TO_SEARCH, pointset, query_point, answer_point_idx_dist);
+      }
+      // or don't flip it (flip it again to undo)
+      if(!stop)
+      {
+        str[i] ^= 1;
+        find_strings_with_fixed_Hamming_dist_for_nearest_neighbor_query(str, i-1, changesLeft, points_checked, MAX_PNTS_TO_SEARCH, pointset, query_point, answer_point_idx_dist);
       }
       return stop;
     }

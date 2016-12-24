@@ -5,6 +5,7 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
+#include <utility>
 
 /** \brief Read a collection of points from file.
  *
@@ -203,7 +204,7 @@ void read_crow_features_oxford(std::vector<T>& data, int N, int D, const char* f
         //break;
     }
     if(i != N)
-        std::cout << "WARNING!!!!!!!! READ less/more points than N" << std::endl;
+        std::cout << "WARNING!!!!!!!! READ less/more points (" << i << ") than N =" << N << std::endl;
     infile.close();
 }
 
@@ -261,6 +262,19 @@ void print_1D_vector(const std::vector<T>& v)
   for (auto& v_i: v)
   {
     std::cout << v_i << " ";
+  }
+  std::cout << "\n";
+}
+
+/** \brief Print 1D vector of pairs.
+ *
+ * @param v           - vector to be printed
+ */
+void print_1D_vector(const std::vector<std::pair<int, float>>& v)
+{
+  for (auto& v_i: v)
+  {
+    std::cout << "(" << v_i.first << ", " << v_i.second << ") ";
   }
   std::cout << "\n";
 }
