@@ -13,7 +13,7 @@
 #define N 60000
 #define D 784
 #define K 3 //floor(log2(N)/2)
-#define Q 100
+#define Q 10000
 #define T int
 #define bitT char
 #define MAX_PNTS_TO_SEARCH 60000 //N * 1 / 100
@@ -64,7 +64,7 @@ int main()
   	std::vector<T> query(Q * D);
   	//readfvecs<T>(query, Q, D, "../create_pointset/siftsmall/siftsmall_base.fvecs");
   	//read_points<T>(query, Q, D, query_filename.c_str());
-  	read_points_IDX_format<T>(query, Q, D, "/Users/gsamaras/Code/C++/create_pointset/MNIST/train-images-idx3-ubyte");
+  	read_points_IDX_format<T>(query, Q, D, "/Users/gsamaras/Code/C++/create_pointset/MNIST/t10k-images-idx3-ubyte");
 
  
   	std::vector<int> results_idxs(Q);
