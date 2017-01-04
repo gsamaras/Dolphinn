@@ -18,7 +18,7 @@
 #define MAX_PNTS_TO_SEARCH N * 1 / 100
 #define RADIUS 1
 
-//     /usr/bin/time -l ./fish
+//     /usr/bin/time -l ./dolphinn
 int main()
 {
 	if(MAX_PNTS_TO_SEARCH > N)
@@ -30,13 +30,8 @@ int main()
   	// vector is actually 1D, emulating a 2D vector
   	std::vector<T> pointset(N * D);
 
-  	const std::string data_filename = "/home/gsamaras/Desktop/Data/Sphere/dim512/Sphere_nb_P" + std::to_string(N) + "_dim" + std::to_string(D) + ".txt";
-  	const std::string query_filename = "/home/gsamaras/Desktop/Data/Sphere/dim512/queries_Sphere_nb_P" + std::to_string(Q)  + "_dim" + std::to_string(D) + ".txt";
-
   	std::cout << "N = " << N << ", D = " << D << ", K = " << K << ", MAX_PNTS_TO_SEARCH = " << MAX_PNTS_TO_SEARCH << std::endl;
 
-  	//readfvecs<T>(pointset, N, D, "../create_pointset/siftsmall/siftsmall_base.fvecs");
-  	//read_points<T>(pointset, N, D, data_filename.c_str());
   	read_points_IDX_format<T>(pointset, N, D, "/Users/gsamaras/Code/C++/create_pointset/MNIST/train-images-idx3-ubyte");
 
 	//print_2D_vector<T>(pointset, N, D);
@@ -57,11 +52,9 @@ int main()
   
   	//print_2D_vector<bitT>(mapped_pointset, N, K, true);
 
-
+	
   	// QUERY
   	std::vector<T> query(Q * D);
-  	//readfvecs<T>(query, Q, D, "../create_pointset/siftsmall/siftsmall_base.fvecs");
-  	//read_points<T>(query, Q, D, query_filename.c_str());
   	read_points_IDX_format<T>(query, Q, D, "/Users/gsamaras/Code/C++/create_pointset/MNIST/t10k-images-idx3-ubyte");
 
  
@@ -82,8 +75,8 @@ int main()
   	std::vector<int> brute_results_idxs(Q);
   	for(int q = 0; q < Q; ++q)
   	{
-    	for(int n = 0; n < N; ++n)
-    	{
+    	    for(int n = 0; n < N; ++n)
+    	    {
       		if(squared_Eucl_distance(query.begin() + q * D, (query.begin() + q * D) + D, pointset.begin() + n * D) <= squared_radius)
       		{
         		brute_results_idxs[q] = q;
@@ -93,7 +86,7 @@ int main()
       		{
         		brute_results_idxs[q] = -1;
     		}
-    	}
+    	    }
   	}
 
   	t2 = high_resolution_clock::now();
