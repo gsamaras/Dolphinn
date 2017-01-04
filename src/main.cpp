@@ -2,7 +2,6 @@
 #include <vector>
 
 #include "IO.h"
-#include "memory.h"
 #include "hypercube.h"
 
 #include <ctime>
