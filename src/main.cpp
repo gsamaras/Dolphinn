@@ -4,7 +4,6 @@
 #include "IO.h"
 #include "memory.h"
 #include "hypercube.h"
-//#include "hashCompareFalconn.h"
 
 #include <ctime>
 #include <ratio>
@@ -12,15 +11,14 @@
 
 #define N 60000
 #define D 784
-#define K 3 //floor(log2(N)/2)
+#define K floor(log2(N)/2)
 #define Q 10000
 #define T int
 #define bitT char
-#define MAX_PNTS_TO_SEARCH 60000 //N * 1 / 100
+#define MAX_PNTS_TO_SEARCH N * 1 / 100
 #define RADIUS 1
 
 //     /usr/bin/time -l ./fish
-//     ssh gsamaras@195.134.71.24
 int main()
 {
 	if(MAX_PNTS_TO_SEARCH > N)
@@ -71,7 +69,7 @@ int main()
 
   	t1 = high_resolution_clock::now();
 
-    hypercube.radius_query(query, Q, RADIUS, MAX_PNTS_TO_SEARCH, results_idxs, 2);
+        hypercube.radius_query(query, Q, RADIUS, MAX_PNTS_TO_SEARCH, results_idxs, 2);
 
   	t2 = high_resolution_clock::now();
   	time_span = duration_cast<duration<double>>(t2 - t1);
@@ -86,14 +84,6 @@ int main()
   	{
     	for(int n = 0; n < N; ++n)
     	{
-      		/*if(q == 8 && (n == 8 || n == 0))
-      		{
-        		int dist = squared_Eucl_distance(query.begin() + q * D, (query.begin() + q * D) + D, pointset.begin() + n * D);
-
-        		std::cout << dist << " " << squared_radius << std::endl;
-        		std::cout << (dist <= squared_radius) << std::endl;
-
-      		}*/
       		if(squared_Eucl_distance(query.begin() + q * D, (query.begin() + q * D) + D, pointset.begin() + n * D) <= squared_radius)
       		{
         		brute_results_idxs[q] = q;
