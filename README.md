@@ -8,4 +8,4 @@ Part of the Data Science Master Thesis of George Samaras, National Kapodistrian 
 
 ---
 
-Read more in our paper: [Practical linear-space Approximate Near Neighbors in high dimension](https://arxiv.org/pdf/1612.07405.pdf).
+Read more in our paper: [Practical linear-space Approximate Near Neighbors in high dimension](https://arxiv.org/pdf/1612.07405.pdf)[Avarikioti, Prof. Emiris, Psarros (original idea) and Samaras].
