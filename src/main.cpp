@@ -15,6 +15,7 @@
 #define T int
 #define bitT char
 #define MAX_PNTS_TO_SEARCH N * 1 / 100
+#define THREADS_NO 2
 #define RADIUS 1
 
 //     /usr/bin/time -l ./dolphinn
@@ -38,7 +39,7 @@ int main()
   	using namespace std::chrono;
   	high_resolution_clock::time_point t1 = high_resolution_clock::now();
  
-  	Dolphinn::Hypercube<T, bitT> hypercube(pointset, N, D, K, 2);
+  	Dolphinn::Hypercube<T, bitT> hypercube(pointset, N, D, K, THREADS_NO);
 
   	high_resolution_clock::time_point t2 = high_resolution_clock::now();
  
@@ -61,7 +62,7 @@ int main()
 
   	t1 = high_resolution_clock::now();
 
-        hypercube.radius_query(query, Q, RADIUS, MAX_PNTS_TO_SEARCH, results_idxs, 2);
+        hypercube.radius_query(query, Q, RADIUS, MAX_PNTS_TO_SEARCH, results_idxs, THREADS_NO);
 
   	t2 = high_resolution_clock::now();
   	time_span = duration_cast<duration<double>>(t2 - t1);
