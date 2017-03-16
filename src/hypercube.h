@@ -192,7 +192,7 @@ namespace Dolphinn
       }
     }
 
-    /** \brief Radius query the Hamming cube.
+    /** \brief Nearest Neighbor query in the Hamming cube.
       *
       * @param query               - vector of queries
       * @param Q                   - number of queries
