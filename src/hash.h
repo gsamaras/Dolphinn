@@ -329,13 +329,13 @@ class StableHashFunction
       if(!stop)
       {
         str[i] ^= 1;
-        find_strings_with_fixed_Hamming_dist_for_nearest_neighbor_query(str, i-1, changesLeft-1, points_checked, MAX_PNTS_TO_SEARCH, pointset, query_point, answer_point_idx_dist);
+        stop = find_strings_with_fixed_Hamming_dist_for_nearest_neighbor_query(str, i-1, changesLeft-1, points_checked, MAX_PNTS_TO_SEARCH, pointset, query_point, answer_point_idx_dist);
       }
       // or don't flip it (flip it again to undo)
       if(!stop)
       {
         str[i] ^= 1;
-        find_strings_with_fixed_Hamming_dist_for_nearest_neighbor_query(str, i-1, changesLeft, points_checked, MAX_PNTS_TO_SEARCH, pointset, query_point, answer_point_idx_dist);
+        stop = find_strings_with_fixed_Hamming_dist_for_nearest_neighbor_query(str, i-1, changesLeft, points_checked, MAX_PNTS_TO_SEARCH, pointset, query_point, answer_point_idx_dist);
       }
       return stop;
     }
