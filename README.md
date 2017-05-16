@@ -5,7 +5,7 @@ Part of the Data Science Master Thesis of George Samaras, National Kapodistrian 
 
 src/main.cpp contains a representative example. In general, a data-structure of class Hypercube should be constructed and then one can execute Near (radius) or Nearest Neighbor queries on that Hypercube.
 
-If you are interested in Nearest Neighbor, use [DolphinnPy](https://github.com/ipsarros/DolphinnPy).
+Note: If you are interested in Nearest Neighbor, use [DolphinnPy](https://github.com/ipsarros/DolphinnPy).
 
 ---
 
