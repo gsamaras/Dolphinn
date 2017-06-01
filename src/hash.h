@@ -24,8 +24,8 @@ class StableHashFunction
 {
     // of original pointset
     int dimension; 
-    int r;
-    int b;
+    float r;
+    float b;
     std::vector<T> a;
     std::uniform_int_distribution<int> uni_distribution;
     std::uniform_int_distribution<int> uni_bit_distribution;
@@ -49,7 +49,7 @@ class StableHashFunction
 	 * @param mean  	 - optional parameter of Normal Distribution. Default is 0.0.
 	 * @param deviation  - optional parameter of Normal Distribution. Default is 1.0.
 	 */
-  	StableHashFunction(const int D, const int r, const float mean = 0.0, const float deviation = 1.0)
+  	StableHashFunction(const int D, const float r, const float mean = 0.0, const float deviation = 1.0)
   		: dimension(D), r(r), uni_distribution(0, r), uni_bit_distribution(0, 1),
   		generator(std::chrono::system_clock::now().time_since_epoch().count())
   	{  		
@@ -59,7 +59,7 @@ class StableHashFunction
   			a.push_back(distribution(generator));
       }
 
-  		b = uni_distribution(generator);
+  		b = distribution(generator);
   	}
 
     /** \brief Constructor that creates a 
@@ -77,7 +77,7 @@ class StableHashFunction
      * @param mean         - optional parameter of Normal Distribution. Default is 0.0.
      * @param deviation    - optional parameter of Normal Distribution. Default is 1.0.
     */
-    StableHashFunction(const int D, const int r, const int thread_info, const float mean = 0.0, const float deviation = 1.0)
+    StableHashFunction(const int D, const float r, const int thread_info, const float mean = 0.0, const float deviation = 1.0)
       : dimension(D), r(r), uni_distribution(0, r), uni_bit_distribution(0, 1),
       generator(thread_info + std::chrono::system_clock::now().time_since_epoch().count())
     {     
@@ -87,7 +87,7 @@ class StableHashFunction
         a.push_back(distribution(generator));
       }
 
-      b = uni_distribution(generator);
+      b = distribution(generator);
     }
 
   	/** \brief Hash a pointset.
