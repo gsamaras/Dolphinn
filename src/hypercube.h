@@ -37,7 +37,7 @@ namespace Dolphinn
       * @param r           - parameter of Stable Distribution. Default value is 4. Should be modified for Nearest 
       *                      Neighbor Search, to adapt to the average distance of the NN, 'r' is the hashing window.
    */
-    Hypercube(const std::vector<T>& pointset, const int N, const int D, const int K, const int threads_no = std::thread::hardware_concurrency(), const int r = 4/*3 or 8*/)
+    Hypercube(const std::vector<T>& pointset, const int N, const int D, const int K, const int threads_no = std::thread::hardware_concurrency(), const float r = 4/*3 or 8*/)
       : D(D), K(K), pointset(pointset)
     {
       if(threads_no >= K || ((K - 1) % threads_no) != 0)
