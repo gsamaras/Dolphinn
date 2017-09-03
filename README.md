@@ -10,7 +10,7 @@ Note: If you are interested in Nearest Neighbor, use [DolphinnPy](https://github
 
 ## How fast is DOLPHINN?
 
-On data sets with more than 1 million points in around 128 dimensions, DOLPHINN typically requires only some milliseconds per query (running on a reasonably modern desktop CPU).
+On data sets with more than 1 million points in around 128 dimensions, DOLPHINN typically requires only some milliseconds per query.
 
 ---
 
