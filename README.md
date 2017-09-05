@@ -8,7 +8,7 @@ Just include DOLPHINN's header file. src/main.cpp contains a representative exam
 
 Note: If you are interested in Nearest Neighbor, use [DolphinnPy](https://github.com/ipsarros/DolphinnPy).
 
-## How fast is DOLPHINN?
+## DOLPHINN is generic yet fast!
 
 On data sets with more than 1 million points in around 128 dimensions, DOLPHINN typically requires only some milliseconds per query.
 
